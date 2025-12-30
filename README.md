@@ -1,73 +1,167 @@
-# 🎬 AI Movie Recommender
+# Movie Recommender
 
-A full-stack, AI-powered web application that suggests movies based on your natural language preferences.
+
 
 ## ✨ Features
-*   **AI-Powered**: Uses OpenAI's GPT models (via standardized API or OpenRouter) to understand nuanced requests like "90s action movies set in space".
-*   **Responsive UI**: Fully optimized for Mobile, Tablet, and Desktop.
-*   **Robust Error Handling**:
-    *   **Mock Mode**: Automatically switches to mock data if the API Key is invalid or out of credits, ensuring the app never crashes.
-    *   **OpenRouter Support**: Automatically detects and configures `sk-or-v1` keys.
-*   **Modern Stack**: React (Vite), Node.js (Fastify), SQLite.
 
----
+- **🤖 AI-Powered Engine**: Utilizes OpenAI (or OpenRouter compatible models) to interpret complex user queries (e.g., "Sad movies from the 90s that end happily").
+- **📱 Responsive UI**: A sleek, mobile-first interface built with React and modern CSS.
+- **🖼️ Smart Posters**: Automatically fetches high-definition movie posters and backdrops using the Wikipedia API.
+- **🅰️ Mock Mode**: Includes a robust fallback mode for development and testing without live API keys.
+- **💾 Local History**: Caches recommendations using a lightweight SQLite database.
+- **🔍 Deep Details**: Interactive modal view showing director, cast, genre, and dynamic visual backdrops.
 
-## 🚀 Getting Started
+## 📂 Project Structure
 
-### 1. Prerequisites
--   **Node.js**: (v18 or higher recommended) -> [Download Node.js](https://nodejs.org/)
--   **API Key**: An OpenAI API Key OR an OpenRouter Key.
+```bash
+antigravity/
+├── client/                 # React Frontend
+│   ├── public/
+│   ├── src/
+│   │   ├── services/       # API integration
+│   │   ├── App.jsx         # Main component
+│   │   ├── App.css         # Styling
+│   │   └── main.jsx
+│   ├── package.json
+│   └── vite.config.js
+├── server/                 # Node.js Backend
+│   ├── src/
+│   │   ├── controllers/    # Request handlers
+│   │   ├── db/             # Database connection & schema
+│   │   ├── routes/         # API endpoints
+│   │   └── services/       # Business logic (OpenAI, DB)
+│   ├── .env                # Environment variables (GitIgnored)
+│   ├── app.js              # App entry point
+│   └── package.json
+└── README.md
+```
 
-### 2. Backend Setup
-1.  Navigate to the server directory:
-    ```bash
-    cd server
-    ```
-2.  Install dependencies:
-    ```bash
-    npm install
-    ```
-3.  Configure Environment:
-    Create a `.env` file in `server/` with:
-    ```ini
-    PORT=3000
-    OPENAI_API_KEY=sk-your-key-here
-    DB_PATH=./db.sqlite
-    ```
-4.  Start the Server:
-    ```bash
-    npm run dev
-    ```
+## 🚀 Setup Instructions
 
-### 3. Frontend Setup
-1.  Navigate to the client directory (in a new terminal):
-    ```bash
-    cd client
-    ```
-2.  Install dependencies:
-    ```bash
-    npm install
-    ```
-3.  Start the Application:
-    ```bash
-    npm run dev
-    ```
-    Open `http://localhost:5173` in your browser.
+### Prerequisites
+- **Node.js**: v16 or higher
+- **npm**: v7 or higher
+- **API Key**: An API key from OpenAI or OpenRouter (optional for Mock Mode).
 
----
+### 1. Backend Setup
 
-## ☁️ Deployment
+Navigate to the server directory and install dependencies:
 
-We have a dedicated guide for deploying to **Render (Backend)** and **Netlify (Frontend)**.
+```bash
+cd server
+npm install
+```
 
-👉 **[Read the Deployment Guide](./DEPLOYMENT.md)**
+Create a `.env` file in the `server/` directory:
 
----
+```env
+PORT=3000
+OPENAI_API_KEY=your_api_key_here
+DB_PATH=./db.sqlite
+```
+*Note: If no API key is provided, the app will automatically default to Mock Mode.*
 
-## 🛠 Troubleshooting
+Start the backend server:
 
-| Error | Cause | Solution |
+```bash
+npm run dev
+# Server running at http://localhost:3000
+```
+
+### 2. Frontend Setup
+
+Open a new terminal, navigate to the client directory, and install dependencies:
+
+```bash
+cd client
+npm install
+```
+
+Start the development server:
+
+```bash
+npm run dev
+# client running at http://localhost:5173
+```
+
+## 📖 Usage
+
+1.  Open your browser and navigate to `http://localhost:5173`.
+2.  In the search bar, type a natural language description of what you want to watch.
+    *   *Example: "Sci-fi movies about time travel strictly from the 1980s"*
+3.  Click **"Get Recommendations"**.
+4.  Browse the results. Click on any movie card to view detailed information and the movie poster.
+
+## 🗄️ Database Schema (SQLite)
+
+The application uses a local SQLite database (`db.sqlite`) to store recommendations.
+
+**Table: `recommendations`**
+
+| Column | Type | Description |
 | :--- | :--- | :--- |
-| **App shows "Matrix (Mock)"** | API Key is invalid or quota exceeded. | Check `server/.env`. Add credits to your OpenAI account. |
-| **`EADDRINUSE`** | Port 3000 is taken. | Kill the process using port 3000. |
-| **`NetworkError`** | Backend not running. | Ensure `npm run dev` is active in the `server` folder. |
+| `id` | INTEGER PK | Auto-incrementing ID |
+| `user_preference` | TEXT | The raw prompt provided by the user |
+| `recommendations` | TEXT | JSON string containing the AI response |
+| `created_at` | DATETIME | Timestamp of the request |
+
+## 🔌 API Endpoints
+
+### `POST /api/movies/recommend`
+
+Generates movie recommendations based on user input.
+
+**Request Body:**
+```json
+{
+  "preference": "Cyberpunk anime movies"
+}
+```
+
+**Response:**
+```json
+[
+  {
+    "title": "Akira",
+    "year": 1988,
+    "description": "A secret military project endangers Neo-Tokyo...",
+    "director": "Katsuhiro Otomo",
+    "genre": "Animation, Action, Sci-Fi",
+    "rating": "8.0/10"
+  },
+  ...
+]
+```
+
+## 🛠️ Technologies Used
+
+-   **Frontend**: React, Vite, CSS3
+-   **Backend**: Node.js, Fastify
+-   **Database**: SQLite (better-sqlite3)
+-   **AI Integration**: OpenAI SDK (Custom Prompt Engineering)
+-   **External APIs**: Wikipedia API (Images), Placehold.co (Fallbacks)
+
+## 🛡️ Security & Best Practices
+
+-   **API Key Safety**: API keys are stored strictly in the backend `.env` file and are never exposed to the client.
+-   **Input Validation**: User input is sanitized before processing.
+-   **Error Handling**: Comprehensive error catching ensures the app doesn't crash on API failures.
+-   **Git Ignore**: `.env`, `node_modules`, and `db.sqlite` are excluded from version control.
+
+## 📦 Deployment
+
+### Backend (Render/Heroku/Railway)
+1.  Push your code to GitHub.
+2.  Connect your repository to a hosting provider.
+3.  Set the `Root Directory` to `server`.
+4.  Add your `OPENAI_API_KEY` in the provider's Environment Variables settings.
+5.  Deploy!
+
+### Frontend (Netlify/Vercel)
+1.  Connect your repository.
+2.  Set the `Base Directory` to `client`.
+3.  Set the `Build Command` to `npm run build`.
+4.  Set the `Publish Directory` to `dist`.
+5.  Add an environment variable `VITE_API_URL` pointing to your deployed Backend URL.
+
+

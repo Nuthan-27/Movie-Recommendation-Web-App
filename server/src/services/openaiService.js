@@ -23,6 +23,10 @@ const generateRecommendations = async (userPreference) => {
       - title: Movie title
       - year: Release year (number)
       - description: A short, engaging reason for the recommendation (max 1 sentence)
+      - director: Name of the director
+      - cast: Main cast members (comma separated string)
+      - genre: Primary genres (e.g., Sci-Fi, Action)
+      - rating: IMDb rating (e.g., "8.7/10")
       
       Do not include any markdown formatting (like \`\`\`json). Just the raw JSON string.
     `;
@@ -37,10 +41,11 @@ const generateRecommendations = async (userPreference) => {
     });
 
     const content = completion.choices[0].message.content.trim();
-    
-    // Attempt to parse JSON to ensure validity
+    // Clean up potential markdown formatting
+    const jsonString = content.replace(/```json/g, '').replace(/```/g, '').trim();
+
     try {
-      const recommendations = JSON.parse(content);
+      const recommendations = JSON.parse(jsonString);
       return recommendations;
     } catch (parseError) {
       console.error("Failed to parse OpenAI response:", content);
@@ -56,17 +61,29 @@ const generateRecommendations = async (userPreference) => {
       {
         title: "The Matrix (Mock)",
         year: 1999,
-        description: "A computer hacker learns from mysterious rebels about the true nature of his reality and his role in the war against its controllers."
+        description: "A computer hacker learns from mysterious rebels about the true nature of his reality.",
+        director: "The Wachowskis",
+        cast: "Keanu Reeves, Laurence Fishburne, Carrie-Anne Moss",
+        genre: "Sci-Fi, Action",
+        rating: "8.7/10"
       },
       {
         title: "Inception (Mock)",
         year: 2010,
-        description: "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a C.E.O."
+        description: "A thief who steals corporate secrets through dream-sharing technology is given the task of planting an idea.",
+        director: "Christopher Nolan",
+        cast: "Leonardo DiCaprio, Joseph Gordon-Levitt, Elliot Page",
+        genre: "Sci-Fi, Thriller",
+        rating: "8.8/10"
       },
       {
         title: "Interstellar (Mock)",
         year: 2014,
-        description: "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival."
+        description: "A team of explorers travel through a wormhole in space in an attempt to ensure humanity's survival.",
+        director: "Christopher Nolan",
+        cast: "Matthew McConaughey, Anne Hathaway, Jessica Chastain",
+        genre: "Sci-Fi, Drama",
+        rating: "8.7/10"
       }
     ];
   }
